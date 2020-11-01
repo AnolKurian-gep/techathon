@@ -41,19 +41,31 @@ class Product_name(Resource):
         result= ""
         result = db.products.find_one({'product_name':product_name},{'_id':0,'product_name':0,})
         ans = result.get("product_id")
-        # bid = random.randint(1,100)
-        # qty = random.randint(500,1000)
+        bid = random.randint(1,100)
+        qty = random.randint(500,1000)
         # payload = {'Bid': bid, 'Pid': ans, 'Qty': qty}
         # r = request.get("api",params=payload)
         # print(r)
         # r = callmodel(ans)
-        # finaldict = {
-        # "name1": "2323",
-        # "name2": "Mustang",
-        # "name3": 1964
-        # }
-        # print(thisdict)
-        return (ans) 
+        finaldict = [["1","4234"],
+                        ["2","4234"],
+                        ["3","545"],["4","4234"],
+                        ["5","34"],["6","4234"],
+                        ["7","425434"],["8","4234"],
+                        ["9","545"],["10","4234"]
+                        ]
+        ansdict = []
+        for x in range(len(finaldict)):
+            diction={"supplier":"","price":""}
+            id = finaldict[x][0]
+            price = finaldict[x][1]
+            result = db.supplier.find_one({'supplier_id':id},{'_id':0,'supplier_id':0})
+            name = result.get("supplier_name")
+            diction["supplier"]=str(name)
+            diction["price"]= price
+            ansdict.append(diction)
+        print(ansdict)
+        return (ansdict) 
 
 def callmodel(ans):
     print(type(ans))
@@ -98,7 +110,7 @@ class Suppliers_id(Resource):
     def get(self,supplier_id):
         print (supplier_id)
         result= ""
-        result = str(db.supplier.find_one({'supplier_id':supplier_id},{'_id':0,'supplier_id':0}))
+        result = db.supplier.find_one({'supplier_id':supplier_id},{'_id':0,'supplier_id':0})
         return jsonify(result) 
 
 class Buyers(Resource):
