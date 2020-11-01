@@ -1,9 +1,12 @@
 from flask import Flask, request
 from flask_cors import CORS, cross_origin
-from flask_restful import Resource, Api
+from flask_restful import Resource, Api,reqparse, abort
 from json import dumps
 from flask_jsonpify import jsonify
 from pymongo import MongoClient
+import requests
+import random
+
 app = Flask(__name__)
 api = Api(app)
 
@@ -13,27 +16,67 @@ mongo = MongoClient(
     'mongodb+srv://anol:anol@cluster0.1cvez.mongodb.net/techathon?retryWrites=true&w=majority')
 db = mongo.get_database('techathon')
 
+parser = reqparse.RequestParser()
+parser.add_argument('data')
+
 @app.route("/")
 def hello():
     return jsonify("hello techathon")
+
 
 class Products(Resource):
     def get(self):
         result= ""
         result1= ""
         array = []
-        data = db.categories.find({}, {'_id': 0})   
+        data = db.products.find({}, {'_id': 0})   
         for x in data:
             result = result +","+  str(x)
         result = result[1:]
         return jsonify(result)
 
-class Categories(Resource):
-    def get(self,product_id):
-        print (product_id)
+class Product_name(Resource):
+    def get(self,product_name):
+        global ans
         result= ""
-        result = str(db.categories.find_one({'product_id':product_id},{'_id':0,'supplier_id':0}))
-        return jsonify(result) 
+        result = db.products.find_one({'product_name':product_name},{'_id':0,'product_name':0,})
+        ans = result.get("product_id")
+        # bid = random.randint(1,100)
+        # qty = random.randint(500,1000)
+        # payload = {'Bid': bid, 'Pid': ans, 'Qty': qty}
+        # r = request.get("api",params=payload)
+        # print(r)
+        # r = callmodel(ans)
+        return (ans) 
+
+def callmodel(ans):
+    print(type(ans))
+    print(type(ans))
+    y = ("api" + str(ans))
+    # r = request.get(y)
+    return "cool"
+
+# def callmodel2(ans):
+#     k = 8
+#     r= requests.post("https://eastus.azuredatabricks.net/api/2.0/jobs/run-now",data={
+#                         "job_id": 72774,
+#                         "notebook_params": {
+#                         "BPC": "1",
+#                         "PID": "2",
+#                         "auth_token": "dapife51bb0cd5b0ecaa53236a5956d0f77b",
+#                         # "callback":"http://127.0.0.1:5000/job"
+#                         }
+#                     }
+#                     )
+#     return
+
+# class Job(Resource):
+#     def post(self):
+#         global ret
+#         print(str(request.data))
+#         ret = str(request.data)
+#         return 201
+
 
 class Suppliers(Resource):
     def get(self):
@@ -49,7 +92,7 @@ class Suppliers_id(Resource):
     def get(self,supplier_id):
         print (supplier_id)
         result= ""
-        result = str(db.supplier.find_one({'supplier_id':supplier_id},{'_id':0}))
+        result = str(db.supplier.find_one({'supplier_id':supplier_id},{'_id':0,'supplier_id':0}))
         return jsonify(result) 
 
 class Buyers(Resource):
@@ -89,8 +132,11 @@ class Orders_id(Resource):
         result = str(db.previous_orders.find_one({'order_no':orders_id},{'_id':0}))
         return jsonify(result) 
 
+
+
+# api.add_resource(Job, '/job')
 api.add_resource(Products, '/products')
-api.add_resource(Categories, '/products/<product_id>') # Route_3
+api.add_resource(Product_name, '/products/<product_name>') # Route_3
 api.add_resource(Suppliers, '/suppliers')
 api.add_resource(Suppliers_id, '/suppliers/<supplier_id>')
 api.add_resource(Buyers, '/buyers')
