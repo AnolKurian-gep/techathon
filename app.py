@@ -72,14 +72,15 @@ class Buyers_id(Resource):
 
 class Orders(Resource):
     def get(self):
-        result= ""
+        result= []
         result1= ""
         array = []
         data = db.previous_orders.find({}, {'_id': 0})   
+        print(data)
+        print(type(data))
         for x in data:
-            result = result +","+  str(x)
-        result = result[1:]
-        return jsonify(result)
+            result.append(x)
+        return result
 
 class Orders_id(Resource):
     def get(self,orders_id):
