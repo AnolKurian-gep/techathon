@@ -47,6 +47,12 @@ class Product_name(Resource):
         # r = request.get("api",params=payload)
         # print(r)
         # r = callmodel(ans)
+        # finaldict = {
+        # "name1": "2323",
+        # "name2": "Mustang",
+        # "name3": 1964
+        # }
+        # print(thisdict)
         return (ans) 
 
 def callmodel(ans):
