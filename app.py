@@ -6,6 +6,7 @@ from flask_jsonpify import jsonify
 from pymongo import MongoClient
 import requests
 import random
+import json
 
 app = Flask(__name__)
 api = Api(app)
@@ -43,22 +44,31 @@ class Product_name(Resource):
         ans = result.get("product_id")
         bid = random.randint(1,100)
         qty = random.randint(500,1000)
-        # payload = {'Bid': bid, 'Pid': ans, 'Qty': qty}
-        # r = request.get("api",params=payload)
-        # print(r)
+        payload = ( ('Pid', str(ans)),('Bid', str(bid)), ('Qnt', str(qty)))
+        answer = requests.get("https://supplierevaluationrun.azurewebsites.net/predictRandomForest",params=payload)
+        # print(answer.url)
+        # return 200
         # r = callmodel(ans)
-        finaldict = [["1","4234"],
-                        ["2","4234"],
-                        ["3","545"],["4","4234"],
-                        ["5","34"],["6","4234"],
-                        ["7","425434"],["8","4234"],
-                        ["9","545"],["10","4234"]
-                        ]
+        # finaldict = [["1","4234"],
+        #                 ["2","4234"],
+        #                 ["3","545"],["4","4234"],
+        #                 ["5","34"],["6","4234"],
+        #                 ["7","425434"],["8","4234"],
+        #                 ["9","545"],["10","4234"]
+        #                 ]
+        strfinaldict=answer.text
+        print(strfinaldict)
+        print(type(strfinaldict))
+        finaldict = json.loads(strfinaldict) 
+        print(finaldict)
+        print(type(finaldict))
         ansdict = []
         for x in range(len(finaldict)):
             diction={"supplier":"","price":""}
             id = finaldict[x][0]
             price = finaldict[x][1]
+            print(id)
+            print(price)
             result = db.supplier.find_one({'supplier_id':id},{'_id':0,'supplier_id':0})
             name = result.get("supplier_name")
             diction["supplier"]=str(name)
