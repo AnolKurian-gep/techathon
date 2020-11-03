@@ -46,22 +46,8 @@ class Product_name(Resource):
         qty = random.randint(500,1000)
         payload = ( ('Pid', str(ans)),('Bid', str(bid)), ('Qnt', str(qty)))
         answer = requests.get("https://supplierevaluationrun.azurewebsites.net/predictRandomForest",params=payload)
-        # print(answer.url)
-        # return 200
-        # r = callmodel(ans)
-        # finaldict = [["1","4234"],
-        #                 ["2","4234"],
-        #                 ["3","545"],["4","4234"],
-        #                 ["5","34"],["6","4234"],
-        #                 ["7","425434"],["8","4234"],
-        #                 ["9","545"],["10","4234"]
-        #                 ]
         strfinaldict=answer.text
-        print(strfinaldict)
-        print(type(strfinaldict))
         finaldict = json.loads(strfinaldict) 
-        print(finaldict)
-        print(type(finaldict))
         ansdict = []
         for x in range(len(finaldict)):
             diction={"supplier":"","price":""}
@@ -74,6 +60,7 @@ class Product_name(Resource):
             diction["supplier"]=str(name)
             diction["price"]= price
             ansdict.append(diction)
+        ansdict = sorted(ansdict, key = lambda i: i['price'])
         print(ansdict)
         return (ansdict) 
 
@@ -81,29 +68,7 @@ def callmodel(ans):
     print(type(ans))
     print(type(ans))
     y = ("api" + str(ans))
-    # r = request.get(y)
     return "cool"
-
-# def callmodel2(ans):
-#     k = 8
-#     r= requests.post("https://eastus.azuredatabricks.net/api/2.0/jobs/run-now",data={
-#                         "job_id": 72774,
-#                         "notebook_params": {
-#                         "BPC": "1",
-#                         "PID": "2",
-#                         "auth_token": "dapife51bb0cd5b0ecaa53236a5956d0f77b",
-#                         # "callback":"http://127.0.0.1:5000/job"
-#                         }
-#                     }
-#                     )
-#     return
-
-# class Job(Resource):
-#     def post(self):
-#         global ret
-#         print(str(request.data))
-#         ret = str(request.data)
-#         return 201
 
 
 class Suppliers(Resource):
